@@ -794,7 +794,7 @@ void GazeboMavlinkInterface::SendGroundTruth()
 void GazeboMavlinkInterface::GpsCallback(GpsPtr& gps_msg, const int& id) {
   SensorData::Gps gps_data;
   gps_data.time_utc_usec = gps_msg->time_utc_usec();
-  gps_data.fix_type = 3;
+  gps_data.fix_type = 5;
   gps_data.latitude_deg = gps_msg->latitude_deg() * 1e7;
   gps_data.longitude_deg = gps_msg->longitude_deg() * 1e7;
   gps_data.altitude = gps_msg->altitude() * 1000.0;
@@ -808,7 +808,7 @@ void GazeboMavlinkInterface::GpsCallback(GpsPtr& gps_msg, const int& id) {
   ignition::math::Angle cog(atan2(gps_msg->velocity_east(), gps_msg->velocity_north()));
   cog.Normalize();
   gps_data.cog = static_cast<uint16_t>(GetDegrees360(cog) * 100.0);
-  gps_data.satellites_visible = 10;
+  gps_data.satellites_visible = 12;
   gps_data.id = id;
 
   mavlink_interface_->SendGpsMessages(gps_data);
@@ -963,7 +963,7 @@ void GazeboMavlinkInterface::IRLockCallback(IRLockPtr& irlock_message) {
 }
 
 void GazeboMavlinkInterface::targetReleativeCallback(TargetRelativePtr& targetRelative_message) {
-  
+
   mavlink_target_relative_t sensor_msg;
   sensor_msg.timestamp = targetRelative_message->time_usec();
   sensor_msg.x = targetRelative_message->pos_x();
