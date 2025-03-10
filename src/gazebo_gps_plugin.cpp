@@ -218,6 +218,9 @@ void GpsPlugin::Load(sensors::SensorPtr _parent, sdf::ElementPtr _sdf)
   gravity_W_ = world_->Gravity();
 
   gps_pub_ = node_handle_->Advertise<sensor_msgs::msgs::SITLGps>("~/" + rootModelName + "/link/" + gps_topic_, 10);
+
+  // Subscribe to GPS override topic
+  gps_override_sub_ = node_handle_->Subscribe("~/" + rootModelName + "/link/gps_override", &GpsPlugin::GPSOverrideCallback, this);
 }
 
 void GpsPlugin::OnWorldUpdate(const common::UpdateInfo& /*_info*/)
@@ -306,10 +309,10 @@ void GpsPlugin::OnWorldUpdate(const common::UpdateInfo& /*_info*/)
   gps_msg.set_longitude_deg(latlon.second * 180.0 / M_PI);
   gps_msg.set_altitude(pos_W_I.Z() + alt_home_ - noise_gps_pos_.Z() + gps_bias_.Z());
 
-  std_xy_ = 0.05;
-  std_z_ = 0.05;
-  gps_msg.set_eph(std_xy_);
-  gps_msg.set_epv(std_z_);
+  gps_msg.set_eph(_eph);
+  gps_msg.set_epv(_epv);
+  gps_msg.set_sat_visible(_sat_visible);
+  gps_msg.set_fix_type(_fix_type);
 
   gps_msg.set_velocity_east(velocity_current_W.X() + noise_gps_vel_.Y());
   gps_msg.set_velocity(velocity_current_W_xy.Length());
@@ -369,4 +372,20 @@ void GpsPlugin::OnSensorUpdate()
     gps_pub_->Publish(gps_msg);
   }
 }
+
+void GpsPlugin::GPSOverrideCallback(GpsOverridePtr& msg) {
+  if (msg->has_sat_visible()) {
+    _sat_visible = msg->sat_visible();
+  }
+  if (msg->has_fix_type()) {
+    _fix_type = msg->fix_type();
+  }
+  if (msg->has_eph()) {
+    _fix_type = msg->eph();
+  }
+  if (msg->has_epv()) {
+    _fix_type = msg->epv();
+  }
+}
+
 } // namespace gazebo

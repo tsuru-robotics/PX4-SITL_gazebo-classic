@@ -328,6 +328,7 @@ set(sensor_msgs
   msgs/Groundtruth.proto
   msgs/Range.proto
   msgs/SITLGps.proto
+  msgs/SITLGpsOverride.proto
   msgs/OpticalFlow.proto
   msgs/MagneticField.proto
   msgs/Pressure.proto

@@ -48,6 +48,7 @@
 #include <gazebo/sensors/GpsSensor.hh>
 
 #include <SITLGps.pb.h>
+#include <SITLGpsOverride.pb.h>
 
 namespace gazebo
 {
@@ -58,6 +59,8 @@ static constexpr double kDefaultGpsXYNoiseDensity = 2.0e-4;     // (m) / sqrt(hz
 static constexpr double kDefaultGpsZNoiseDensity = 4.0e-4;      // (m) / sqrt(hz)
 static constexpr double kDefaultGpsVXYNoiseDensity = 0.2;       // (m/s) / sqrt(hz)
 static constexpr double kDefaultGpsVZNoiseDensity = 0.4;        // (m/s) / sqrt(hz)
+
+typedef const boost::shared_ptr<const sensor_msgs::msgs::SITLGpsOverride> GpsOverridePtr;
 
 class GAZEBO_VISIBLE GpsPlugin : public SensorPlugin
 {
@@ -88,6 +91,7 @@ private:
 
   transport::NodePtr node_handle_;
   transport::PublisherPtr gps_pub_;
+  transport::SubscriberPtr gps_override_sub_{nullptr};
 
   std::string gps_topic_;
   double update_rate_;
@@ -133,6 +137,13 @@ private:
   double gps_z_noise_density_;
   double gps_vxy_noise_density_;
   double gps_vz_noise_density_;
+
+  void GPSOverrideCallback(GpsOverridePtr& msg);
+  int _sat_visible{15};
+  int _fix_type{5};
+  double _eph{0.05};
+  double _epv{0.05};
+
 };     // class GAZEBO_VISIBLE GpsPlugin
 }      // namespace gazebo
 #endif // _GAZEBO_GPS_PLUGIN_HH_

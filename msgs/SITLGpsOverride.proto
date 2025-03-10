@@ -1,0 +1,10 @@
+syntax = "proto2";
+package sensor_msgs.msgs;
+
+message SITLGpsOverride
+{
+  optional int32 sat_visible  = 1;
+  optional int32 fix_type     = 2;
+  optional double eph         = 3;
+  optional double epv         = 4;
+}
