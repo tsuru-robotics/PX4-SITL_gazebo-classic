@@ -140,7 +140,7 @@ private:
 
   void GPSOverrideCallback(GpsOverridePtr& msg);
   int _sat_visible{15};
-  int _fix_type{5};
+  int _fix_type{6};
   double _eph{0.05};
   double _epv{0.05};
 
